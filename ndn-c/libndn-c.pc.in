@@ -1,0 +1,9 @@
+prefix=@PREFIX@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@
+
+Name: libndn-c
+Description: NDN C API
+Version: @VERSION@
+Libs: -L${libdir}
+Cflags: -I${includedir}
