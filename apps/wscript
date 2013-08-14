@@ -1,0 +1,55 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+from waflib import Configure, Utils, Logs
+import os
+
+def build (bld):
+    for f in bld.path.ant_glob("*", dir=True):
+        if f.name == "wscript":
+            continue
+        try:
+            if os.path.isdir(f.abspath ()):
+                extra_deps = f.find_resource ('EXTRA_DEPS')
+                deps = []
+                if extra_deps is not None:
+                    deps = Utils.to_list (extra_deps.read())
+                    if deps:
+                        for dep in deps:
+                            if not bld.is_defined2 ('HAVE_%s' % dep):
+                                raise SkipException ("[%s] is not building due to missing [%s] dependency" % (f, dep))
+
+                bld(target = "../bin/%s" % f.name,
+                    features = ['c', 'cprogram'],
+                    source = f.ant_glob ("**/*.c"),
+                    use = ['lib/ndn-c'] + deps,
+                    includes = [".."])
+            elif f.name.endswith(".c"):
+                bld (target = "../bin/%s" % f.change_ext('', '.c').name,
+                     features = ['c', 'cprogram'],
+                     source = f,
+                     use = 'lib/ndn-c',
+                     includes = [".."])
+            elif f.name.endswith(".in"):
+                bld (features = "subst",
+                     source = f,
+                     target = "../bin/%s" % f.change_ext('', '.in').name,
+                     install_path = "${BINDIR}",
+                     chmod = 0755,
+                     )
+            else:
+                Logs.info ('[%s] not building yet' % f.nice_path())
+        except SkipException, e:
+            Logs.error (e)
+            pass
+
+class SkipException (Exception):
+    pass
+
+@Configure.conf
+def is_defined2(self,key):
+	assert key and isinstance(key,str)
+	ban=key+'='
+	for x in self.env['DEFINES'] + self.env['DEFINES_COPY']:
+		if x.startswith(ban):
+			return True
+	return False

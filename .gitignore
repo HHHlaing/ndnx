@@ -1,5 +1,6 @@
 .waf*
 .lock*
+build
 .DS_Store
 ._*
 .metadata
@@ -24,3 +25,5 @@ local
 local/
 local.subdirs
 ndnx-xcode-project
+*.pyc
+*.pyo

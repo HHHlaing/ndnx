@@ -12,7 +12,7 @@ def configure (conf):
     conf.check_doxygen(mandatory=False)
 
 def options (opt):
-    opt.load ('doxygen', tooldir=['.'])
+    opt.load ('doxygen', tooldir=['waf-tools'])
 
 def doxygen (bld):
     if not bld.env.DOXYGEN:

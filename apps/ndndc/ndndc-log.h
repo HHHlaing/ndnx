@@ -1,4 +1,9 @@
 /**
+ * @file ndndc-log.h
+ * @brief logging functions for ndndc.
+ *
+ * A NDNx program.
+ *
  * Portions Copyright (C) 2013 Regents of the University of California.
  * 
  * Based on the CCNx C Library by PARC.
@@ -16,34 +21,31 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#ifndef NDNDC_LOG_H
+#define NDNDC_LOG_H
 /**
- * This module replaces ndnr_main on the android platform.  It includes the
- * methods a JNI interface would use to start ndnd.
+ * @brief Issue note on stderr, controlled by verbose flag
+ * @param lineno Line number where problem happened
+ * @param format printf-style format line
  */
+void
+ndndc_note(int lineno, const char *format, ...);
 
-#include <stdarg.h>
-#include <android/log.h>
-#include <ndnr_private.h>
+/**
+ * @brief Issue warning on stderr
+ * @param lineno Line number where problem happened
+ * @param format printf-style format line
+ */
+void
+ndndc_warn(int lineno, const char *format, ...);
 
-static int
-logger(void *loggerdata, const char *format, va_list ap)
-{
-    __android_log_vprint(ANDROID_LOG_INFO, "NDNR", format, ap);
-}
+/**
+ * @brief Issue error message on stderr and terminate execution of the app
+ * @param lineno Line number where problem happened
+ * @param format printf-style format line
+ */
+void
+ndndc_fatal(int lineno, const char *format, ...);
 
-int
-start_ndnr(void)
-{
-    struct ndnr_handle *h = NULL;
-   
-	h = r_init_create(&logger, NULL);
-	if (h == NULL) {
-		exit(1);
-	}
-    ndnr_msg(h, "r_init_create h=%p", h);
-	r_dispatch_run(h);
-	s = (h->running != 0);
-    ndnr_msg(h, "exiting.");
-	r_init_destroy(&h);
-	return 0;
-}
+extern int verbose;
+#endif // NDNDC_LOG_H

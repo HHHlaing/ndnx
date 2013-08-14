@@ -6,10 +6,10 @@
 When using this tool, the wscript will look like:
 
 	def options(opt):
-	        opt.tool_options('ssl')
+	        opt.tool_options('openssl', tooldir=['waf-tools'])
 
 	def configure(conf):
-		conf.load('compiler_c ssl')
+		conf.load('compiler_c openssl')
         conf.check_ssl(var='SSL', mandatory=True)
 
 	def build(bld):
@@ -58,7 +58,7 @@ def check_ssl(self,*k,**kw):
 
 def options(opt):
         """
-        SSL options
+        OpenSSL options
         """
-        opt = opt.add_option_group("SSL Options")
+        opt = opt.add_option_group("OpenSSL Options")
         opt.add_option('--ssl',type='string',default='',dest='ssl',help='''path to OpenSSL library''')

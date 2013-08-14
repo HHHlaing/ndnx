@@ -1,0 +1,37 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build (bld):
+    ##########################################################
+    #                      Sync library                      #
+    ##########################################################
+
+    bld(target="ndn-c-sync-objects",
+        features = ['c'],
+        source = bld.path.ant_glob(['*.c']),
+        use = 'lib/ndn-c',
+        includes = [".."])
+
+    # Shared library for NDN C sync API
+    bld(target="../lib/ndn-c-sync", features=['c', 'cshlib'], use = "ndn-c-sync-objects")
+
+    # # Static library for NDN C sync API
+    # bld(target="../lib/ndn-c-sync", features=['c', 'cstlib'], use = "ndn-c-sync-objects", install_path="${LIBDIR}")
+
+    # Install sync's header files
+    bld.install_files("${INCLUDEDIR}/sync", bld.path.ant_glob(['*.h']))
+
+    ##########################################################
+    #                      Sync tools                        #
+    ##########################################################
+
+    bld(target="../bin/ndnsyncslice",
+        features = ['c', 'cprogram'],
+        source = 'bin/ndnsyncslice.c',
+        use = "../lib/ndn-c-sync",
+        includes = "..")
+
+    bld(target="../bin/ndnsyncwatch",
+        features = ['c', 'cprogram'],
+        source = 'bin/ndnsyncwatch.c',
+        use = "../lib/ndn-c-sync",
+        includes = "..")    
